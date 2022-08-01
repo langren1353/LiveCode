@@ -99,6 +99,10 @@ function createSandbox() {
     on_error: (event: any) => {
       const msg =
         event.value instanceof Error ? event.value.message : event.value
+      if (msg.includes('Relative references must start with either')) {
+        runtimeError.value = ''
+        return
+      }
       if (
         msg.includes('Failed to resolve module specifier') ||
         msg.includes('Error resolving module specifier')
