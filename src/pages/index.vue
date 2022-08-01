@@ -1,32 +1,28 @@
 <template>
   <div>
-    <VueEditor :code="code" @datachange="changeEvent"></VueEditor>
-    <VueLivePreview :code="code"></VueLivePreview>
+    <!--MARK 报错信息可以展示出来：store.state.errors[0]-->
+    <VueEditor @datachange="changeEvent"></VueEditor>
+    <VueLivePreview :show="true" :ssr="false"></VueLivePreview>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
+import {provide} from 'vue'
 import VueEditor from '@comp/VueEditor'
-import VueLivePreview from '@comp/VuePreview'
+import VueLivePreview from '@repl/output/Preview'
+import { ReplStore, Store } from '@repl/store.ts'
 
-const code = ref(`const cmOptions = {
-  mode: "sql", // 语言模式
-  //mode: "text/javascript", // 语言模式
-  theme: "cobalt", // 主题
-  lineNumbers: true, // 显示行号
-  smartIndent: true, // 智能缩进
-  indentUnit: 2, // 智能缩进单位为4个空格长度
-  foldGutter: true, // 启用行槽中的代码折叠
-  styleActiveLine: true, // 显示选中行的样式
-  extraKeys: {
-    // 触发按键
-    // Ctrl: "autocomplete",
-  }
-};`)
+const store: Store = new ReplStore()
+store.init()
 
-const changeEvent = (str) => {
-  code.value = str
+// MARK 上下两列的都是展示为这个样子，只要一个index.vue文件
+// store.addFile('index.vue')
+// store.setActive('index.vue')
+
+provide('store', store)
+
+const changeEvent = (code) => {
+  store.state.activeFile.code = code
 }
 </script>
 

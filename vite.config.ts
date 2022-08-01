@@ -14,6 +14,7 @@ export default defineConfig({
       '@': `${path.resolve(__dirname, 'src')}/`,
       '@comp': `${path.resolve(__dirname, 'src')}/components`,
       '@/comp': `${path.resolve(__dirname, 'src')}/components`,
+      '@repl': `${path.resolve(__dirname, 'src')}/lib/repl`,
     },
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },

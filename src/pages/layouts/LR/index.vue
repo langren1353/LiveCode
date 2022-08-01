@@ -5,37 +5,28 @@
     </div>
     <div class="flex flex-1 h-full">
       <div class="w-1/2">
-        <VueEditor :code="code" @datachange="changeEvent"></VueEditor>
+        <VueEditor @datachange="changeEvent"></VueEditor>
       </div>
       <div class="flex-1">
-        <VueLivePreview :code="code"></VueLivePreview>
+        <VueLivePreview :show="true" :ssr="false"></VueLivePreview>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script setup lang="ts">
 import VueEditor from '@comp/VueEditor'
-import VueLivePreview from '@comp/VuePreview'
+import VueLivePreview from '@repl/output/Preview'
+import { ReplStore, Store } from '@repl/store.ts'
+import {provide} from "vue";
 
-const code = ref(`const cmOptions = {
-  mode: "sql", // 语言模式
-  //mode: "text/javascript", // 语言模式
-  theme: "cobalt", // 主题
-  lineNumbers: true, // 显示行号
-  smartIndent: true, // 智能缩进
-  indentUnit: 2, // 智能缩进单位为4个空格长度
-  foldGutter: true, // 启用行槽中的代码折叠
-  styleActiveLine: true, // 显示选中行的样式
-  extraKeys: {
-    // 触发按键
-    // Ctrl: "autocomplete",
-  }
-};`)
+const store: Store = new ReplStore()
+store.init()
 
-const changeEvent = (str) => {
-  code.value = str
+provide('store', store)
+
+const changeEvent = (code) => {
+  store.state.activeFile.code = code
 }
 </script>
 

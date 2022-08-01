@@ -30,6 +30,9 @@ import debounce from 'lodash/debounce'
 
 import { CSSLint } from 'csslint'
 import { JSHINT } from 'jshint/dist/jshint-rhino'
+import { inject } from "vue";
+
+const store = inject('store')
 
 window.CSSLint = CSSLint
 window.JSHINT = JSHINT
@@ -70,9 +73,9 @@ onMounted(() => {
     hint: true,
     lineNumbers: true, // 显示行号
     lineWrapping: true,
-    tabSize: 2,
+    tabSize: 4,
     smartIndent: true, // 智能缩进
-    indentUnit: 2, // 智能缩进单位为2个空格长度
+    indentUnit: 4, // 智能缩进单位为2个空格长度
     autofocus: false,
     line: true,
     foldGutter: true, // 启用行槽中的代码折叠
