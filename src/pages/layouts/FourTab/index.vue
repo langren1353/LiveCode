@@ -28,7 +28,7 @@
 import { ref, reactive, provide, computed  } from 'vue'
 import VueEditor from '@comp/VueEditor'
 import VueLivePreview from '@repl/output/Preview'
-import templateDoc from './template.html?raw'
+import templateDoc from '@/pages/template.html?raw'
 import { ReplStore, Store } from "../../../lib/repl";
 
 const editorOption = reactive({
@@ -69,8 +69,8 @@ const changeEvent = (key, value) => {
   
   const code = genVueCode()
   store.state.activeFile.code = code
-  // store.state..code = code
 }
+
 const genVueCode = () => {
   return templateDoc
     .replace('模板代码放这里', editorOption.html)

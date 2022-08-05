@@ -26,6 +26,23 @@ import 'codemirror/addon/lint/javascript-lint.js'
 import 'codemirror/addon/lint/css-lint.js'
 import 'codemirror/addon/lint/html-lint.js'
 
+import 'codemirror/addon/comment/comment.js'
+import 'codemirror/addon/comment/continuecomment.js'
+// 提示弹窗
+import 'codemirror/addon/dialog/dialog.js'
+import 'codemirror/addon/dialog/dialog.css'
+
+// 搜索功能
+import 'codemirror/addon/search/search.js'
+import 'codemirror/addon/search/searchcursor.js'
+import 'codemirror/addon/search/jump-to-line.js'
+
+// 折叠功能
+import 'codemirror/addon/fold/foldgutter.css'
+import 'codemirror/addon/fold/foldcode.js'
+import 'codemirror/addon/fold/brace-fold.js'
+import 'codemirror/addon/fold/xml-fold.js'
+
 import debounce from 'lodash/debounce'
 
 import { CSSLint } from 'csslint'
@@ -42,11 +59,11 @@ emmet(CodeMirror)
 const props = defineProps({ 
   code: {
     type: String,
-    defualt: '',
+    default: '',
   },
   mode: {
     type: String,
-    defualt: '',
+    default: '',
   }
 })
 
@@ -62,8 +79,11 @@ const lint_option = {
   html: true,
 }
 
+let editor = null
+let isUserTyping = false
+
 onMounted(() => {
-  const editor = CodeMirror.fromTextArea(textareaRef.value, {
+  editor = CodeMirror.fromTextArea(textareaRef.value, {
     mode: props.mode,
     theme: 'idea',
     value: '',
@@ -83,25 +103,33 @@ onMounted(() => {
     spellcheck: true,
     matchBrackets: true,
     gutters: ["CodeMirror-lint-markers"],
-    extraKeys: {
+    extraKeys: { // MARK https://www.niwoxuexi.com/blog/xiaozhu/article/1228
       Tab: 'emmetExpandAbbreviation',
-      Enter: 'emmetInsertLineBreak'
+      Enter: 'emmetInsertLineBreak',
+      "Ctrl-/": "toggleComment"
     },
     autoRefresh: true
   })
+  
   editor.on('change',
     debounce(() => {
       const changeData = editor.getValue()
       $emit('datachange', changeData)
+      isUserTyping = true
+      setTimeout(() => {
+        isUserTyping = false
+      })
     }, 400)
   )
   
   editor.setValue(props.code)
   editor.setOption("viewportMargin", Infinity);
 })
+
+watch(() => props.code, (val) => {
+  if (!isUserTyping) editor.setValue(val)
+})
 </script>
-<style>
-.CodeMirror{
-  height: 100%;
-}
+<style scoped>
+
 </style>

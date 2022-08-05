@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     Next: typeof import('./src/components/VuePreview/next.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SizeableDiv: typeof import('./src/components/SizeableDiv/index.vue')['default']
     VueEditor: typeof import('./src/components/VueEditor/index.vue')['default']
     VuePreview: typeof import('./src/components/VuePreview/index.vue')['default']
   }
