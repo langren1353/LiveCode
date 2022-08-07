@@ -35,13 +35,12 @@
 <script setup lang="ts">
 import SizeableDiv from '@/components/SizeableDiv'
 import templateDoc from './template.html?raw'
-import { computed, provide, reactive, ref, toRaw } from 'vue'
+import { provide, reactive, ref, toRaw} from 'vue'
 import VueEditor from '@comp/VueEditor'
 import VueLivePreview from '@repl/output/Preview'
 import Message from '@repl/Message'
 import { ReplStore, Store } from '@repl/store.ts'
 import { ElMessage } from 'element-plus'
-import { compileFile } from '@repl/transform'
 import less from 'less'
 
 const $message = ElMessage
@@ -68,19 +67,25 @@ store.init()
 store.setActive('App.vue')
 
 provide('store', store)
+provide('clear-console', ref(true))
 
 const moduleFile = 'import-map.json'
 
 let hasInit = false
 
 let defaultOption = {
-  html: `<div class='zhangsan'>
-    水电费来看撒
+  html: `<div class="content">
+    <div class="title">
+        Vue3在线编辑器
+    </div> 
+    <div>
+        {{ text }}
+    </div>
 </div>`,
-  css: `.zhangsan{
-  background: red;
+  css: `.title{
+  font-size: 22px;
 }`,
-  javascript: 'const name = "zhansgan"',
+  javascript: 'const text = "支持setup 语法"',
   module: store.state.files[moduleFile].code
 }
 
