@@ -173,8 +173,9 @@ const doSave = () => {
 let isLoading = ref(true)
 
 
-loadLocal()
+
 setTimeout(() => {
+  loadLocal()
   init()
   isLoading.value = false
 }, 100)
