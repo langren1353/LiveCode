@@ -13,10 +13,10 @@
     </div>
     <div class="flex flex-1 flex-column h-full main-content">
       <SizeableDiv v-show="tabs.html.visible" tag="HTML">
-        <VueEditor :code="tabs.html.code" mode="html" @datachange="c => changeEvent('html', c)"></VueEditor>
+        <VueEditor :code="tabs.html.code" mode="vue" @datachange="c => changeEvent('html', c)"></VueEditor>
       </SizeableDiv>
-      <SizeableDiv v-show="tabs.css.visible" tag="CSS">
-        <VueEditor :code="tabs.css.code" mode="css" @datachange="c => changeEvent('css', c)"></VueEditor>
+      <SizeableDiv v-show="tabs.css.visible" tag="LESS">
+        <VueEditor :code="tabs.css.code" mode="sass" @datachange="c => changeEvent('css', c)"></VueEditor>
       </SizeableDiv>
       <SizeableDiv v-show="tabs.javascript.visible" tag="JS">
         <VueEditor :code="tabs.javascript.code" mode="javascript" @datachange="c => changeEvent('javascript', c)"></VueEditor>
@@ -39,9 +39,10 @@ import { computed, provide, reactive, ref, toRaw } from 'vue'
 import VueEditor from '@comp/VueEditor'
 import VueLivePreview from '@repl/output/Preview'
 import Message from '@repl/Message'
-import debounce from 'lodash/debounce'
 import { ReplStore, Store } from '@repl/store.ts'
 import { ElMessage } from 'element-plus'
+import { compileFile } from '@repl/transform'
+import less from 'less'
 
 const $message = ElMessage
 
@@ -84,50 +85,58 @@ let defaultOption = {
 }
 
 const init = () => {
-
-  console.log('函数初始化')
   hasInit = true
+
+  changeEvent('module', defaultOption.module)
   
-  Object.keys(defaultOption).map(key => {
+  // 延迟触发，保证module先变更
+  Object.keys(defaultOption).filter(one => one !== 'module').map(key => {
     changeEvent(key, defaultOption[key])
   })
-
-  changeEvent()
 }
 
-const changeEvent = (key = '', value = '') => {
-  const genVueCode = () => {
+const changeEvent = async (key = '', value = '') => {
+  const genVueCode = async () => {
+    const {css: renderCSS} = await less.render(tabs.css.code)
+
     return templateDoc
       .replace('模板代码放这里', tabs.html.code)
       .replace('JS setup 代码放这里', tabs.javascript.code)
-      .replace('CSS 代码放这里', tabs.css.code)
+      .replace('CSS 代码放这里', renderCSS)
   }
-  
-  const changeNormalCode = () => {
-    if(key) tabs[key].code = value
-    const code = genVueCode()
+
+  const changeNormalCode = async () => {
+    if (key) tabs[key].code = value
+
+
+    const code = await genVueCode()
+
     store.state.activeFile.code = code
+
+    store.setActive('App.vue')
   }
-  
+
   const changeModuleCode = (key = 'module') => {
     tabs[key].code = value
     store.state.files[moduleFile].code = value
   }
 
-  if(!hasInit) return
-  
-  if(key === 'module') {
+  if (!hasInit) return
+
+  if (key === 'module') {
     changeModuleCode()
   } else {
     changeNormalCode()
   }
-  
+
   // 自动保存调用
   doSave()
 }
 
 const toggleActive = (key) => {
   tabs[key].visible = !tabs[key].visible
+  
+  doSave()
 }
 
 const BindKeyPress = (event) => {
@@ -163,11 +172,12 @@ const doSave = () => {
 
 let isLoading = ref(true)
 
+
+loadLocal()
 setTimeout(() => {
-  loadLocal()
   init()
   isLoading.value = false
-}, 500)
+}, 100)
 
 </script>
 

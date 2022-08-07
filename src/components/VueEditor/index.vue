@@ -8,7 +8,6 @@ import CodeMirror from 'codemirror'
 import emmet from '@emmetio/codemirror-plugin'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/lint/lint.css'
-// import 'codemirror/addon/hint/show-hint'
 
 import 'codemirror/addon/selection/active-line'
 import 'codemirror/addon/edit/matchbrackets'
@@ -18,6 +17,7 @@ import 'codemirror/mode/htmlmixed/htmlmixed'
 import 'codemirror/mode/htmlembedded/htmlembedded'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/mode/css/css'
+import 'codemirror/mode/sass/sass'
 
 import './idea.css'
 
@@ -33,9 +33,11 @@ import 'codemirror/addon/dialog/dialog.js'
 import 'codemirror/addon/dialog/dialog.css'
 
 // 搜索功能
-import 'codemirror/addon/search/search.js'
-import 'codemirror/addon/search/searchcursor.js'
-import 'codemirror/addon/search/jump-to-line.js'
+import 'codemirror/addon/search/searchcursor'
+import 'codemirror/addon/search/search'
+import 'codemirror/addon/search/jump-to-line'
+import 'codemirror/addon/search/matchesonscrollbar'
+import 'codemirror/addon/search/match-highlighter'
 
 // 折叠功能
 import 'codemirror/addon/fold/foldgutter.css'
@@ -48,6 +50,13 @@ import debounce from 'lodash/debounce'
 import { CSSLint } from 'csslint'
 import { JSHINT } from 'jshint/dist/jshint-rhino'
 import { inject } from "vue";
+
+// 代码提示功能
+import 'codemirror/addon/hint/show-hint.css';
+import 'codemirror/addon/hint/show-hint';
+import 'codemirror/addon/hint/javascript-hint';
+import 'codemirror/addon/hint/css-hint';
+import 'codemirror/addon/hint/html-hint';
 
 const store = inject('store')
 
@@ -72,11 +81,23 @@ const textareaRef = ref()
 
 const lint_option = {
   javascript: {
-    options: {esversion: 2021},
+    options: { esversion: 2021 },
     highlightLines: true
   },
+  sass: true,
   css: true,
-  html: true,
+  vue: {
+    html: {
+      options: {
+        'attr-value-double-quotes': false,
+      }
+    }
+  },
+  html: { 
+    options: {
+      'attr-value-double-quotes': false,
+    }
+  },
 }
 
 let editor = null

@@ -46,6 +46,7 @@ export interface StoreState {
   files: Record<string, File>
   activeFile: File
   errors: (string | Error)[]
+  logs: (string | Error)[]
   vueRuntimeURL: string
   vueServerRendererURL: string
 }
@@ -125,6 +126,7 @@ export class ReplStore implements Store {
       files,
       activeFile: files[mainFile],
       errors: [],
+      logs: [],
       vueRuntimeURL: this.defaultVueRuntimeURL,
       vueServerRendererURL: this.defaultVueServerRendererURL
     })

@@ -2,12 +2,12 @@
 import { ref, watch } from 'vue'
 import { CompilerError } from 'vue/compiler-sfc'
 
-const props = defineProps(['err', 'warn'])
+const props = defineProps(['err', 'warn', 'log'])
 
 const dismissed = ref(false)
 
 watch(
-  () => [props.err, props.warn],
+  () => [props.err, props.warn, props.log],
   () => {
     dismissed.value = false
   }
@@ -33,6 +33,7 @@ function formatMessage(err: string | Error): string {
       v-if="!dismissed && (err || warn)"
       class="msg"
       :class="err ? 'err' : 'warn'"
+      @click="dismissed = true"
     >
       <pre>{{ formatMessage(err || warn) }}</pre>
       <button class="dismiss" @click="dismissed = true">✕</button>
